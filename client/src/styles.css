@@ -1,0 +1,335 @@
+/* ======= Color system (your palette) ======= */
+:root{
+  --c-1:#22577a;  /* deep blue */
+  --c-2:#38a3a5;  /* teal */
+  --c-3:#57cc99;  /* mint green */
+  --c-4:#80ed99;  /* light green */
+  --c-5:#c7f9cc;  /* pale green */
+  --ink:#151515;
+  --bg: var(--c-5);
+  --panel: #e9edf0; /* derived light */
+}
+
+
+/* ======= Global ======= */
+*{box-sizing:border-box}
+html,body,#root{height:100%}
+body{
+  margin:0;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Inter, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+  color: var(--ink);
+  background: var(--bg);
+}
+.container{
+  width:100%;
+  max-width: 1100px;
+  margin:0 auto;
+  padding: 0 20px;
+}
+
+.navbar{
+  position: sticky; top:0; z-index:10;
+  background: var(--bg); /* --c-1 with alpha */
+  backdrop-filter: saturate(120%) blur(6px);
+  border-bottom: 4px solid var(--ink);
+}
+.nav-inner{
+  display:flex; align-items:center; justify-content:space-between;
+  min-height:64px; gap:16px; flex-wrap:wrap;
+}
+.brand{
+  font-weight: 900; letter-spacing:.2px; font-size: clamp(18px,3vw,22px);
+}
+.brand-left{ color: var(--ink); }
+.brand-right{ color: var(--c-3); margin-left:2px }
+
+.nav-links{
+  display:flex; gap:20px; flex-wrap:wrap; justify-content:flex-end;
+}
+.nav-links a{
+  text-decoration:none; color: var(--ink); font-weight:600;
+  padding:10px 0;
+}
+.nav-links a.star{
+  color: var(--c-5);
+}
+
+/* ======= Hero ======= */
+.hero-wrap{
+  border-top: 6px solid var(--ink); /* matches the screenshot’s top border line */
+}
+.hero{
+  position:relative;
+  padding: clamp(40px, 6vw, 80px) 0;
+  text-align:center;
+}
+.hero-title{
+  margin: 0 0 12px;
+  font-size: clamp(34px, 8vw, 80px);
+  line-height: 0.95;
+  font-weight: 900;
+}
+.hero-sub{
+  margin: 0 auto;
+  max-width: 900px;
+  font-size: clamp(14px, 2.2vw, 18px);
+  color: #1f2a2e;
+  opacity: .9;
+}
+.hero-sub code{
+  background: rgba(0,0,0,.06);
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+
+/* ======= Input Card (neubrutalism) ======= */
+.input-card{
+  margin: clamp(22px, 4vw, 32px) auto 0;
+  background: #e8e5ef1a; /* subtle */
+  background-color: rgba(255,255,255,0.45);
+  padding: clamp(14px, 2.4vw, 20px);
+  border-radius: 18px;
+  border: 5px solid var(--ink);
+  box-shadow: 8px 8px 0 0 var(--ink);
+  max-width: 900px;
+}
+
+.input-row{
+  display:grid;
+  grid-template-columns: 1fr auto;
+  gap: 14px;
+}
+
+.repo-input{
+  width:100%;
+  font-size: 16px;
+  padding: 16px 18px;
+  border-radius: 14px;
+  border: 4px solid var(--ink);
+  outline: none;
+  background: #f4f1fb;
+  box-shadow: 4px 4px 0 0 var(--ink);
+}
+.repo-input::placeholder{
+  color:#647079
+}
+
+.btn-primary{
+  cursor:pointer;
+  font-weight:800;
+  padding: 16px 22px;
+  border-radius: 14px;
+  border: 4px solid var(--ink);
+  background: var(--c-2);
+  color: #0f1719;
+  box-shadow: 4px 4px 0 0 var(--ink);
+  transition: transform 120ms ease, box-shadow 120ms ease;
+  min-width: 160px;
+}
+.btn-primary:active{
+  transform: translate(2px,2px);
+  box-shadow: 2px 2px 0 0 var(--ink);
+}
+
+.btn-primary[disabled],
+.btn-primary[aria-disabled="true"]{
+  opacity: .6;
+  cursor: not-allowed;
+  filter: grayscale(20%);
+}
+
+
+/* ======= Examples ======= */
+.examples{
+  margin-top: 14px;
+  text-align:left;
+}
+.examples-label{
+  display:block;
+  color:#35424a;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+.chip-row{ display:flex; flex-wrap:wrap; gap:10px }
+.chip{
+  border: 3px solid var(--ink);
+  border-radius: 12px;
+  background: #d7c8f3;
+  padding: 8px 12px;
+  font-weight: 700;
+  cursor:pointer;
+  box-shadow: 3px 3px 0 0 var(--ink);
+}
+.chip:active{
+  transform: translate(1px,1px);
+  box-shadow: 2px 2px 0 0 var(--ink);
+}
+
+/* ======= Decorative sparkles ======= */
+.sparkle{
+  position:absolute;
+  width:42px;
+  height:42px;
+  fill:#c9b6ff;
+  stroke:var(--ink);
+  stroke-width:3px;
+}
+.sparkle-left{ left: 2%; top: 18% }
+.sparkle-right{ right: 6%; top: 24% }
+
+/* ======= Footer ======= */
+.footer{
+  border-top: 4px solid var(--ink);
+  padding: 14px 0;
+  text-align:center;
+  /* background: rgba(202,210,197,0.6); */
+}
+.footer a{ color: var(--c-3); font-weight:700; text-decoration:none }
+.hide-sm{ display:inline }
+
+/* --- Responsive 2-col grid --- */
+/* .grid-2{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+} */
+
+/* --- Section/card shell --- */
+
+/* Make code blocks scrollable and pretty */
+.code-block.scrollable{
+  overflow: auto;
+}
+
+/* WebKit scrollbar styling */
+.code-block.scrollable::-webkit-scrollbar{
+  height: 10px;
+  width: 10px;
+}
+.code-block.scrollable::-webkit-scrollbar-track{
+  background: #eef7ef;
+  border: 3px solid var(--ink);
+  border-radius: 10px;
+  box-shadow: inset 4px 4px 0 0 rgba(0,0,0,0.08);
+}
+.code-block.scrollable::-webkit-scrollbar-thumb{
+  background: var(--c-2);
+  border: 3px solid var(--ink);
+  border-radius: 10px;
+  box-shadow: 3px 3px 0 0 var(--ink);
+}
+.code-block.scrollable::-webkit-scrollbar-thumb:hover{
+  filter: brightness(0.95);
+}
+
+/* Firefox */
+@supports (scrollbar-width: thin){
+  .code-block.scrollable{
+    scrollbar-width: thin;
+    scrollbar-color: var(--c-2) #eef7ef;
+  }
+}
+
+/* Optional: card body padding tweak so big blocks feel airy */
+.card-body{
+  display: block;
+}
+
+.card-section{
+  background: var(--c-5);
+  /* border: 4px solid var(--ink); */
+  /* border-radius: 18px; */
+  /* box-shadow: 8px 8px 0 0 var(--ink); */
+  padding: 18px;
+}
+.card-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  margin-bottom: 12px;
+}
+.card-title{
+  margin:0;
+  font-size: clamp(18px,2.2vw,26px);
+  font-weight: 800;
+  color: var(--c-1);
+}
+.card-actions{
+  display:flex;
+  gap:10px
+}
+
+/* --- Code block --- */
+.code-block{
+  background: #fff6dc;              /* warm pale like screenshot */
+  border: 4px solid #0f1b22;        /* dark ink */
+  border-radius: 14px;
+  box-shadow: 8px 8px 0 0 #0f1b22;
+  padding: 16px;
+  margin: 0;
+  overflow: auto;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 15px; line-height: 1.6;
+  min-height: 170px;
+  white-space: pre;                  /* keep formatting */
+}
+
+/* --- Buttons (neubrutal) --- */
+.btn-neo{
+  border: 4px solid var(--ink);
+  background: #ffc27a;
+  color: #0f1719;
+  font-weight: 800;
+  padding: 12px 16px;
+  border-radius: 12px;
+  box-shadow: 6px 6px 0 0 var(--ink);
+  cursor: pointer;
+  transition: transform .1s, box-shadow .1s, filter .1s;
+}
+.btn-neo.small{ padding: 10px 14px; font-size: 14px }
+.btn-neo:active{ transform: translate(2px,2px); box-shadow: 3px 3px 0 0 var(--ink) }
+.btn-row{ display:flex; gap:14px; margin-top: 14px; flex-wrap: wrap }
+
+/* --- Skeleton reused (taller) --- */
+.skeleton-box.tall{ height: 220px; }
+
+/* --- Errors --- */
+.error{ color:#b00020; font-weight:800 }
+
+.dashboard-top {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.dashboard-bottom {
+  margin-top: 20px;
+}
+
+.dashboard-top .card-section:first-child .code-block {
+  max-height: 250px;
+}
+
+@media (max-width: 640px){
+  .sparkle{
+    display:none
+  }
+  .hide-sm{
+    display:none
+  }
+  .input-row{
+    grid-template-columns: 1fr;
+  }
+}
+
+
+@media (max-width: 900px) {
+  .dashboard-top {
+    grid-template-columns: 1fr;
+  }
+  .grid-2{
+    grid-template-columns: 1fr;
+  }
+}
