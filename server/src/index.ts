@@ -1,3 +1,4 @@
+// backend/src/index.ts
 import express from "express";
 import cors from "cors";
 import { z } from "zod";
@@ -12,9 +13,15 @@ const AnalyzeReq = z.object({
   ref: z.string().optional(),
 });
 
-app.get("/api/health", (_req, res) =>
-  res.json({ ok: true, ts: new Date().toISOString() })
-);
+function parseGithubUrl(input: string): { owner: string; name: string; ref?: string } {
+  const u = new URL(input.trim());
+  if (u.hostname !== "github.com") throw new Error("Only github.com URLs are supported");
+  const [owner, name, kind, maybeBranch] = u.pathname.replace(/^\/+/, "").split("/");
+  if (!owner || !name) throw new Error("Invalid GitHub URL");
+  return { owner, name, ref: kind === "tree" ? maybeBranch : undefined };
+}
+
+app.get("/api/health", (_req, res) => res.json({ ok: true, ts: new Date().toISOString() }));
 
 app.post("/api/analyze", async (req, res) => {
   const parsed = AnalyzeReq.safeParse(req.body);
@@ -26,26 +33,31 @@ app.post("/api/analyze", async (req, res) => {
     const { owner, name, ref } = parseGithubUrl(parsed.data.repoUrl);
     const result = await analyzeRepo({ owner, name, ref });
 
+    // Shape the response to match frontend src/api/analyze.ts `Analysis`
     res.json({
       repoUrl: result.repoUrl,
       commit: result.commitSha,
       stats: {
         fileCount: result.files.length,
         edgeCount: result.edges.length,
-        durationMs: 0, // TODO: measure with performance.now()
+        durationMs: 0, // optionally measure with performance.now()
       },
       graph: {
-        nodes: result.files.map(f => ({ id: f, path: f, type: "file" as const })),
+        nodes: result.files.map((f) => ({
+          id: f,
+          path: f,
+          type: "file" as const,
+        })),
         edges: result.edges,
       },
-      insights: { cycles: 0, orphans: 0, topHubs: [] },
+      insights: { cycles: 0, orphans: 0, topHubs: [] }, // TODO: compute later
       analytics: {
+        license: result.license,
         depsTotal: result.depsTotal,
         depsOutdated: result.depsOutdated,
         outdatedList: result.outdatedList,
-        vulnsCritical: result.vulns.critical,
-        vulnsHigh: result.vulns.high,
-        vulnsMedium: result.vulns.medium,
+        testFiles: result.testFiles,
+        testFrameworks: result.testFrameworks,
       },
     });
   } catch (e: any) {
@@ -55,14 +67,4 @@ app.post("/api/analyze", async (req, res) => {
 });
 
 const PORT = process.env.PORT ?? 4000;
-app.listen(PORT, () => console.log(`API running at http://localhost:${PORT}`));
-
-function parseGithubUrl(input: string): { owner: string; name: string; ref?: string } {
-  const u = new URL(input.trim());
-  if (u.hostname !== "github.com") throw new Error("Only github.com URLs are supported");
-
-  const [owner, name, kind, maybeBranch] = u.pathname.replace(/^\/+/, "").split("/");
-  if (!owner || !name) throw new Error("Invalid GitHub URL");
-
-  return { owner, name, ref: kind === "tree" ? maybeBranch : undefined };
-}
+app.listen(PORT, () => console.log(`API on http://localhost:${PORT}`));

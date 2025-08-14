@@ -19,24 +19,28 @@ export default function DiagramPage() {
   const [data, setData] = useState<Analysis | null>(null);
 
   useEffect(() => {
-    if (!repoUrl || !parsed) {
-      navigate(`/?repo=${encodeURIComponent(repoUrl)}`, { replace: true });
-      return;
-    }
-    const ctrl = new AbortController();
-    setLoading(true);
-    setError(null);
-    setData(null);
+  if (!repoUrl || !parsed) {
+    navigate(`/?repo=${encodeURIComponent(repoUrl)}`, { replace: true });
+    return;
+  }
+  const ctrl = new AbortController();
+  setLoading(true);
+  setError(null);
+  setData(null);
 
-    analyzeRepo(repoUrl, ctrl.signal)
-      .then(setData)
-      .catch((e: any) => {
-        if (e?.name !== "AbortError") setError(e?.message || "Unknown error");
-      })
-      .finally(() => setLoading(false));
+  analyzeRepo(repoUrl, ctrl.signal)
+    .then((result) => {
+      console.log("✅ Backend analytics:", result.analytics); // 👈 check testFiles + testFrameworks
+      setData(result);
+    })
+    .catch((e: any) => {
+      if (e?.name !== "AbortError") setError(e?.message || "Unknown error");
+    })
+    .finally(() => setLoading(false));
 
-    return () => ctrl.abort();
-  }, [repoUrl, parsed, navigate]);
+
+  return () => ctrl.abort();
+}, [repoUrl, parsed, navigate]);
 
   if (!parsed) return null;
 
@@ -68,6 +72,7 @@ export default function DiagramPage() {
         {...(data?.analytics ?? {})}
       />
     </PanelShell>
+
 
   </div>
 

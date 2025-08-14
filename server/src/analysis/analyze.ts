@@ -1,11 +1,10 @@
-// backend/src/analysis/analyze.ts
 import path from "node:path";
 import fs from "node:fs/promises";
 import { downloadAndExtractRepo, type RepoRef } from "./github";
 import { listAllFiles } from "./listFiles";
 import { buildJsTsEdges } from "./jsGraph";
 import { collectAllDependencies, checkOutdatedDependencies } from "./dependencyUtils";
-import { analyzeVulnerabilities } from "./vulnerabilities";
+import { computeTestAnalytics } from "./tests";
 
 export type OutdatedDep = { name: string; current: string; latest: string; isOutdated: boolean };
 
@@ -18,6 +17,8 @@ export type AnalysisResult = {
   depsTotal: number;
   depsOutdated: number;
   outdatedList: OutdatedDep[];
+  testFiles: number;
+  testFrameworks: string[];
 };
 
 export async function analyzeRepo(ref: RepoRef): Promise<AnalysisResult> {
@@ -28,12 +29,12 @@ export async function analyzeRepo(ref: RepoRef): Promise<AnalysisResult> {
     const files = await listAllFiles(rootAbs, { maxFiles: 8000 });
     const edges = await buildJsTsEdges(rootAbs, files);
 
-    // ✅ monorepo-aware dependency collection
+    // deps + vulnerabilities
     const deps = await collectAllDependencies(rootAbs, files);
     const outdated = await checkOutdatedDependencies(deps);
 
-    // ✅ use deps map for OSV
-    const vulns = await analyzeVulnerabilities(deps);
+    // tests
+    const { testFiles, testFrameworks } = await computeTestAnalytics(files, deps, rootAbs);
 
     const commitSha = rootDirName.split("-").pop() ?? "unknown";
 
@@ -42,10 +43,11 @@ export async function analyzeRepo(ref: RepoRef): Promise<AnalysisResult> {
       commitSha,
       files,
       edges,
-      vulns,
       depsTotal: Object.keys(deps).length,
-      depsOutdated: outdated.filter(d => d.isOutdated).length,
-      outdatedList: outdated.filter(d => d.isOutdated),
+      depsOutdated: outdated.filter((d) => d.isOutdated).length,
+      outdatedList: outdated.filter((d) => d.isOutdated),
+      testFiles,
+      testFrameworks,
     };
   } finally {
     fs.rm(workdir, { recursive: true, force: true }).catch(() => {});

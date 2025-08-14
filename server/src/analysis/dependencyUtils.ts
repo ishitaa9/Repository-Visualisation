@@ -2,12 +2,12 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fetch } from "undici";
+import YAML from "yaml";
 
 export type DependencyMap = Record<string, string>;
 export type OutdatedDep = { name: string; current: string; latest: string; isOutdated: boolean };
 
 export async function collectAllDependencies(rootAbs: string, files: string[]): Promise<DependencyMap> {
-  // find every package.json except inside node_modules
   const manifests = files
     .filter(f => f.endsWith("package.json"))
     .filter(f => !/\/node_modules\//.test(f));
@@ -16,18 +16,38 @@ export async function collectAllDependencies(rootAbs: string, files: string[]): 
 
   for (const relPkg of manifests) {
     const dirRel = relPkg.replace(/\/[^/]+$/, "");
-    const lockRel = path.posix.join(dirRel, "package-lock.json");
+    const lockJson = path.posix.join(dirRel, "package-lock.json");
+    const yarnLock = path.posix.join(dirRel, "yarn.lock");
+    const pnpmLock = path.posix.join(dirRel, "pnpm-lock.yaml");
 
-    // prefer exact versions from lockfile in same folder
-    const lockDeps = await readLockfile(rootAbs, lockRel);
+    let added = false;
+
+    // Prefer npm lockfile
+    const lockDeps = await readPackageLock(rootAbs, lockJson);
     if (lockDeps) {
-      for (const [n, v] of Object.entries(lockDeps)) aggregate[n] = v;
-      continue;
+      Object.assign(aggregate, lockDeps);
+      added = true;
     }
 
-    // fallback to ranges in this package.json
-    const pkgDeps = await readManifestDeps(rootAbs, relPkg);
-    for (const [n, v] of Object.entries(pkgDeps)) aggregate[n] = v;
+    // Fallback: Yarn v1
+    if (!added && files.includes(yarnLock)) {
+      const yarnDeps = await readYarnLock(rootAbs, yarnLock);
+      Object.assign(aggregate, yarnDeps);
+      added = true;
+    }
+
+    // Fallback: PNPM lock
+    if (!added && files.includes(pnpmLock)) {
+      const pnpmDeps = await readPnpmLock(rootAbs, pnpmLock);
+      Object.assign(aggregate, pnpmDeps);
+      added = true;
+    }
+
+    // Last fallback: package.json ranges
+    if (!added) {
+      const pkgDeps = await readManifestDeps(rootAbs, relPkg);
+      Object.assign(aggregate, pkgDeps);
+    }
   }
 
   return aggregate;
@@ -37,19 +57,15 @@ async function readManifestDeps(rootAbs: string, relPkg: string): Promise<Depend
   try {
     const raw = await fs.readFile(path.join(rootAbs, relPkg), "utf8");
     const pkg = JSON.parse(raw);
-    return {
-      ...(pkg.dependencies ?? {}),
-      ...(pkg.devDependencies ?? {}),
-    };
+    return { ...(pkg.dependencies ?? {}), ...(pkg.devDependencies ?? {}) };
   } catch {
     return {};
   }
 }
 
-// npm v7+ and v6 lockfile support (package-lock.json)
-async function readLockfile(rootAbs: string, lockRel: string): Promise<DependencyMap | null> {
+async function readPackageLock(rootAbs: string, rel: string): Promise<DependencyMap | null> {
   try {
-    const raw = await fs.readFile(path.join(rootAbs, lockRel), "utf8");
+    const raw = await fs.readFile(path.join(rootAbs, rel), "utf8");
     const lock = JSON.parse(raw);
     const out: DependencyMap = {};
 
@@ -81,6 +97,44 @@ async function readLockfile(rootAbs: string, lockRel: string): Promise<Dependenc
   }
 }
 
+async function readYarnLock(rootAbs: string, rel: string): Promise<DependencyMap> {
+  try {
+    const raw = await fs.readFile(path.join(rootAbs, rel), "utf8");
+    const out: DependencyMap = {};
+    // Yarn v1 lock format: lines like `"lodash@^4.17.21":`
+    const regex = /^"?(@?[^@\s]+)(?:@[^:]+)?"?:\n {2}version "(.*?)"/gm;
+    let match: RegExpExecArray | null;
+    while ((match = regex.exec(raw))) {
+      const [, name, version] = match;
+      out[name] = version;
+    }
+    return out;
+  } catch {
+    return {};
+  }
+}
+
+async function readPnpmLock(rootAbs: string, rel: string): Promise<DependencyMap> {
+  try {
+    const raw = await fs.readFile(path.join(rootAbs, rel), "utf8");
+    const data: any = YAML.parse(raw);
+    const out: DependencyMap = {};
+    if (data.packages) {
+      for (const [pkgKey, info] of Object.entries<any>(data.packages)) {
+        const m = /^\/(@?[^/]+)\/([^/]+)\//.exec(pkgKey);
+        if (m && info?.resolution?.integrity) {
+          const name = m[1];
+          const version = m[2];
+          out[name] = version;
+        }
+      }
+    }
+    return out;
+  } catch {
+    return {};
+  }
+}
+
 export async function checkOutdatedDependencies(deps: DependencyMap): Promise<OutdatedDep[]> {
   const results: OutdatedDep[] = [];
   for (const [name, currentRaw] of Object.entries(deps)) {
@@ -97,7 +151,12 @@ export async function checkOutdatedDependencies(deps: DependencyMap): Promise<Ou
       }
       const meta: any = await res.json();
       const latest = sanitizeSemver(String(meta.version || ""));
-      results.push({ name, current, latest: latest || "unknown", isOutdated: latest ? compareVersions(current, latest) < 0 : false });
+      results.push({
+        name,
+        current,
+        latest: latest || "unknown",
+        isOutdated: latest ? compareVersions(current, latest) < 0 : false,
+      });
     } catch {
       results.push({ name, current, latest: "unknown", isOutdated: false });
     }

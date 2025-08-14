@@ -26,7 +26,7 @@ export default function RootLayout() {
             <path d="M32 6l6 20 20 6-20 6-6 20-6-20-20-6 20-6 6-20z" />
           </svg>
           <p style={{fontSize:"15px"}}>Made with 💚 by
-            <a href="#" rel="noreferrer" style={{paddingLeft:"4px"}}>Ishita Gupta</a>
+            <span style={{paddingLeft:"4px"}}>Ishita Gupta</span>
           </p>
           <svg className="sparkle-footer " viewBox="0 0 64 64" aria-hidden>
             <path d="M32 6l6 20 20 6-20 6-6 20-6-20-20-6 20-6 6-20z" />

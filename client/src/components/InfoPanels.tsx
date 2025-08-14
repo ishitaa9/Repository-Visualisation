@@ -1,4 +1,4 @@
-import { copyToClipboard, downloadText } from "../lib/textUtils";
+import { copyToClipboard } from "../lib/textUtils";
 
 export function PanelShell({
   title,
@@ -54,14 +54,14 @@ export function CopyButton({ label = "Copy", getText }: { label?: string; getTex
   );
 }
 
-export function DownloadButton({ filename, getText }: { filename: string; getText: () => string }) {
-  return (
-    <button
-      className="btn-neo small"
-      onClick={() => downloadText(filename, getText())}
-      title="Download as file"
-    >
-      ⬇️ Download
-    </button>
-  );
-}
+// export function DownloadButton({ filename, getText }: { filename: string; getText: () => string }) {
+//   return (
+//     <button
+//       className="btn-neo small"
+//       onClick={() => downloadText(filename, getText())}
+//       title="Download as file"
+//     >
+//       ⬇️ Download
+//     </button>
+//   );
+// }

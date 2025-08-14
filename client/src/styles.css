@@ -152,6 +152,7 @@ body{
   gap: 14px;
 }
 .repo-input{
+  color: var(--c-1);
   width:100%;
   font-size: 16px;
   padding: 16px 18px;
@@ -249,6 +250,7 @@ body{
 }
 
 .analytics-section {
+  width: 40vh;
   background: #ffffffcc;
   border: 3px solid var(--ink);
   border-radius: 12px;
@@ -275,6 +277,7 @@ body{
   display: flex;
   flex-direction: column;
   gap: 6px;
+  word-break: break-word;
 }
 
 .ok {
@@ -451,6 +454,7 @@ body{
   gap:12px;
 }
 .graph-select{
+  color: var(--c-1);
   border: 3px solid var(--ink);
   border-radius: 10px;
   padding: 6px 10px;
