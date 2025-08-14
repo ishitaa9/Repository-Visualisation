@@ -13,7 +13,6 @@ export type AnalysisResult = {
   commitSha: string;
   files: string[];
   edges: { source: string; target: string; kind: "import" | "require" | "dynamic" }[];
-  vulns: { critical: number; high: number; medium: number };
   depsTotal: number;
   depsOutdated: number;
   outdatedList: OutdatedDep[];
