@@ -1,4 +1,3 @@
-// src/components/InfoPanels.tsx
 import { copyToClipboard, downloadText } from "../lib/textUtils";
 
 export function PanelShell({
@@ -25,7 +24,7 @@ export function CodeBlock({
   text,
   ariaLabel,
   scrollable = false,
-  maxHeight = 420, // default scroll height
+  maxHeight = 420,
 }: {
   text: string;
   ariaLabel?: string;

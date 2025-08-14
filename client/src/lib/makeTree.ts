@@ -1,4 +1,4 @@
-// Turn ["src/App.tsx","public/index.html"] into a printable ASCII tree.
+// Turn ["App.tsx","index.html"] into a printable ASCII tree.
 export function makeDirectoryTreeText(paths: string[], rootLabel: string): string {
   // Normalize & sort (folders before files at each level)
   const norm = paths

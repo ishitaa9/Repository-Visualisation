@@ -9,7 +9,7 @@ app.use(express.json());
 
 const AnalyzeReq = z.object({
   repoUrl: z.string().url(),
-  ref: z.string().optional()
+  ref: z.string().optional(),
 });
 
 app.get("/api/health", (_req, res) => res.json({ ok: true, ts: new Date().toISOString() }));
@@ -24,10 +24,13 @@ app.post("/api/analyze", async (req, res) => {
 
     res.json({
       repoUrl: result.repoUrl,
-      stats: { fileCount: result.files.length, edgeCount: 0, durationMs: 0 },
-      graph: { nodes: result.files.map(f => ({ id: f, path: f, type: "file" })), edges: [] },
+      stats: { fileCount: result.files.length, edgeCount: result.edges.length, durationMs: 0 },
+      graph: {
+        nodes: result.files.map(f => ({ id: f, path: f, type: "file" })),
+        edges: result.edges, // ✅ real connections here
+      },
       insights: { cycles: 0, orphans: 0, topHubs: [] },
-      commit: result.commitSha
+      commit: result.commitSha,
     });
   } catch (e: any) {
     console.error("[/api/analyze] failed:", e?.message ?? e);

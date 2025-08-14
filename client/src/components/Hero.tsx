@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+
 type Props = {
   repoUrl: string;
   setRepoUrl: (v: string) => void;
@@ -13,9 +15,30 @@ export default function Hero({ repoUrl, setRepoUrl, isValid, onSubmit, onPickExa
     "https://github.com/tiangolo/fastapi",
   ];
 
+  // Generate random sparkle positions
+  const sparkles = useMemo(() => {
+    const total = 10; // how many sparkles
+    return Array.from({ length: total }, () => ({
+      top: `${Math.random() * 90}%`,   // anywhere in hero
+      left: `${Math.random() * 90}%`,
+      delay: `${Math.random() * 2.5}s`, // stagger animation
+      size: `${12 + Math.random() * 12}px` // 12–24px
+    }));
+  }, []);
+
   return (
     <section className="hero">
-      <h1 className="hero-title">Repository to<br />diagram</h1>
+      <h1 className="hero-title-wrap">
+        <svg className="sparkle-title" viewBox="0 0 64 64" aria-hidden>
+          <path d="M32 6l6 20 20 6-20 6-6 20-6-20-20-6 20-6 6-20z" />
+        </svg>
+
+        <span className="hero-title">Repository to<br />diagram</span>
+
+        <svg className="sparkle-title" viewBox="0 0 64 64" aria-hidden>
+          <path d="M32 6l6 20 20 6-20 6-6 20-6-20-20-6 20-6 6-20z" />
+        </svg>
+      </h1>
 
       <p className="hero-sub">
         Turn any GitHub repository into an interactive diagram for visualization.<br className="hide-sm" />
@@ -38,7 +61,7 @@ export default function Hero({ repoUrl, setRepoUrl, isValid, onSubmit, onPickExa
             aria-disabled={!isValid}
             title={isValid ? "Generate diagram" : "Enter a valid GitHub repo URL"}
           >
-            Diagram
+            Visualize
           </button>
         </div>
 
@@ -53,6 +76,25 @@ export default function Hero({ repoUrl, setRepoUrl, isValid, onSubmit, onPickExa
           </div>
         </div>
       </div>
+
+      {/* Render sparkles */}
+      {sparkles.map((s, i) => (
+        <svg
+          key={i}
+          className="sparkle"
+          viewBox="0 0 64 64"
+          aria-hidden
+          style={{
+            top: s.top,
+            left: s.left,
+            width: s.size,
+            height: s.size,
+            animationDelay: s.delay
+          }}
+        >
+          <path d="M32 6l6 20 20 6-20 6-6 20-6-20-20-6 20-6 6-20z" />
+        </svg>
+      ))}
     </section>
   );
 }

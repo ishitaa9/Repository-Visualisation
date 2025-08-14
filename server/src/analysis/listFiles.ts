@@ -15,8 +15,8 @@ const DEFAULT_IGNORES = [
 ];
 
 export type ListOptions = {
-  maxFiles?: number;          // hard cap
-  includeHidden?: boolean;    // include dotfiles
+  maxFiles?: number;
+  includeHidden?: boolean;
 };
 
 export async function readGitignore(rootAbs: string) {

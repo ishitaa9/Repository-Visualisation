@@ -4,8 +4,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import RootLayout from "./layouts/RootLayout";
 import HomePage from "./pages/HomePage";
 import DiagramPage from "./pages/DiagramPage";
-import "./index.css";     // your reset
-import "./styles.css";    // your neubrutal styles
+import "./styles.css";
 
 const router = createBrowserRouter([
   {

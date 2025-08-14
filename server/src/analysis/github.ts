@@ -22,8 +22,8 @@ async function tryDownload(url: string, destPath: string) {
 
 export async function downloadAndExtractRepo(ref: RepoRef): Promise<{ workdir: string; rootDirName: string }> {
   const candidates = [
-    ref.ref,             // explicit ref if provided
-    "HEAD",              // latest default branch (works for most repos)
+    ref.ref,
+    "HEAD",
     "main",
     "master",
   ].filter(Boolean) as string[];
@@ -60,14 +60,8 @@ export async function downloadAndExtractRepo(ref: RepoRef): Promise<{ workdir: s
     gzip: true,
   });
 
-  // GitHub wraps contents in "<owner>-<repo>-<sha>/" dir
+  // GitHub wraps contents in dir
   const entries = await fsp.readdir(tmpBase, { withFileTypes: true });
-  // const root = entries.find(
-  //   (e) => e.isDirectory() && e.name.startsWith(`${ref.owner}-${ref.name}-`)
-  // );
-  // if (!root) {
-  //   throw new Error("Extraction failed: could not find root directory");
-  // }
 
   // Gather directories only
   const dirNames = entries.filter(e => e.isDirectory()).map(e => e.name);

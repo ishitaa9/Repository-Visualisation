@@ -1,4 +1,3 @@
-// src/App.tsx
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import RootLayout from "./layouts/RootLayout";
 import Hero from "./components/Hero";

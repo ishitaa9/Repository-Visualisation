@@ -47,7 +47,7 @@ export async function analyzeRepoMock(repoUrl: string, signal?: AbortSignal): Pr
   };
 }
 
-/** Real backend call (we'll use this later) */
+/** backend call */
 export async function analyzeRepoServer(repoUrl: string, signal?: AbortSignal) {
   const res = await fetch("/api/analyze", {
     method: "POST",

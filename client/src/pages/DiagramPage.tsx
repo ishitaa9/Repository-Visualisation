@@ -1,4 +1,3 @@
-// src/pages/DiagramPage.tsx
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams, useNavigate, Link } from "react-router-dom";
 import { parseGithubUrl } from "../lib/parseRepo";
@@ -6,6 +5,7 @@ import { analyzeRepoServer as analyzeRepo } from "../api/analyze";
 import type { Analysis } from "../api/analyze";
 import { makeDirectoryTreeText } from "../lib/makeTree";
 import { PanelShell, CodeBlock, CopyButton } from "../components/InfoPanels";
+import GraphView from "../components/GraphView";
 
 export default function DiagramPage() {
   const [params] = useSearchParams();
@@ -77,10 +77,17 @@ export default function DiagramPage() {
       {/* Bottom row: full-width */}
       <div className="dashboard-bottom">
         <PanelShell title="Graph Visualization">
-          <div style={{ height: 400, background: "#f0f0f0" }}>
-            {/* Future graph component goes here */}
-            <p style={{ padding: "12px" }}>Graph placeholder</p>
-          </div>
+          {loading ? (
+            <div className="skeleton-box tall" />
+          ) : error ? (
+            <div className="error">⚠️ {error}</div>
+          ) : (
+            <GraphView
+              nodes={data?.graph?.nodes ?? []}
+              edges={data?.graph?.edges ?? []}
+              height={460}
+            />
+          )}
         </PanelShell>
       </div>
 
