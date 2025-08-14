@@ -33,13 +33,16 @@ export default function Hero({ repoUrl, setRepoUrl, isValid, onSubmit, onPickExa
           <path d="M32 6l6 20 20 6-20 6-6 20-6-20-20-6 20-6 6-20z" />
         </svg>
 
-        <span className="hero-title">Repository to<br />diagram</span>
+        <span className="hero-title">Blueprints for<br />Repositories</span>
 
         <svg className="sparkle-title" viewBox="0 0 64 64" aria-hidden>
           <path d="M32 6l6 20 20 6-20 6-6 20-6-20-20-6 20-6 6-20z" />
         </svg>
       </h1>
 
+      <p className="hero-sub">
+        Visualize any GitHub repository!<br className="hide-sm" />
+      </p>
       <p className="hero-sub">
         Turn any GitHub repository into an interactive diagram for visualization.<br className="hide-sm" />
       </p>

@@ -1,13 +1,39 @@
 import { parseGithubUrl } from "../lib/parseRepo";
 
+
+export type OutdatedDep = {
+  name: string;
+  current: string;
+  latest: string;
+  isOutdated: boolean;
+};
+
 export type GraphNode = { id: string; path: string; type: "file" | "dir" };
 export type GraphEdge = { source: string; target: string; kind: "import" | "require" | "dynamic" };
+
 export type Analysis = {
   repoUrl: string;
   stats: { fileCount: number; edgeCount: number; durationMs: number };
   graph: { nodes: GraphNode[]; edges: GraphEdge[] };
   insights: { cycles: number; orphans: number; topHubs: string[] };
+  commit: string;
+
+  analytics: {
+    license: string | null;
+    depsTotal: number;
+    depsOutdated: number;
+    outdatedList: OutdatedDep[];
+    contributors: number | null;
+    busFactor: number | null;
+    hasSecurityPolicy: boolean;
+    testFiles: number;
+    vulnsCritical: number;
+    vulnsHigh: number;
+    vulnsMedium: number;
+  };
 };
+
+
 
 export async function analyzeRepoMock(repoUrl: string, signal?: AbortSignal): Promise<Analysis> {
   // basic validation using existing helper
@@ -57,6 +83,8 @@ export async function analyzeRepoServer(repoUrl: string, signal?: AbortSignal) {
   });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(data?.error || `Server error: ${res.status}`);
-  return data;
+
+  return data as Analysis; // ✅ ensures TS knows it's Analysis type
 }
+
 

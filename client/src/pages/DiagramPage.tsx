@@ -6,6 +6,7 @@ import type { Analysis } from "../api/analyze";
 import { makeDirectoryTreeText } from "../lib/makeTree";
 import { PanelShell, CodeBlock, CopyButton } from "../components/InfoPanels";
 import GraphView from "../components/GraphView";
+import RepoAnalyticsCard from "../components/RepoAnalyticsCard";
 
 export default function DiagramPage() {
   const [params] = useSearchParams();
@@ -47,32 +48,28 @@ export default function DiagramPage() {
     <section className="container" style={{ padding: "32px 0 40px" }}>
       {/* Top row: two columns */}
       <div className="dashboard-top">
-        <PanelShell
-          title="Directory Structure"
-          rightAction={
-            !loading && !error ? <CopyButton label="Copy" getText={() => treeText} /> : null
-          }
-        >
-          {loading ? (
-            <div className="skeleton-box tall" />
-          ) : error ? (
-            <div className="error">⚠️ {error}</div>
-          ) : (
-            <CodeBlock
-              text={treeText}
-              ariaLabel="Directory structure"
-              scrollable
-              maxHeight={250}
-            />
-          )}
-        </PanelShell>
+    <PanelShell
+      title="Directory Structure"
+      rightAction={!loading && !error ? <CopyButton label="Copy" getText={() => treeText} /> : null}
+    >
+      {loading ? (
+        <div className="skeleton-box tall" />
+      ) : error ? (
+        <div className="error">⚠️ {error}</div>
+      ) : (
+        <CodeBlock text={treeText} ariaLabel="Directory structure" scrollable maxHeight={250} />
+      )}
+    </PanelShell>
 
-        <PanelShell title="Repo Info (placeholder)">
-          <p style={{ fontSize: "0.9rem" }}>
-            This space can show repository metadata, stats, or insights later.
-          </p>
-        </PanelShell>
-      </div>
+    <PanelShell title="Repository Analytics">
+      <RepoAnalyticsCard
+        loading={loading}
+        error={error}
+        {...(data?.analytics ?? {})}
+      />
+    </PanelShell>
+
+  </div>
 
       {/* Bottom row: full-width */}
       <div className="dashboard-bottom">
