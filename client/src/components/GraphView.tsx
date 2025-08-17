@@ -6,10 +6,10 @@ import { createPopper } from "@popperjs/core";
 import tippy, { type Instance as TippyInstance } from "tippy.js";
 import "tippy.js/dist/tippy.css";
 import { useState, useRef, useMemo, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 cytoscape.use(fcose);
 cytoscape.use(popper(createPopper));
-
 
 type Node = { id: string; path: string; type: string };
 type Edge = { source: string; target: string; kind: "import" | "require" | "dynamic" };
@@ -22,7 +22,7 @@ const LAYOUTS = [
 ] as const;
 
 const CODE_EXTS = [".ts", ".tsx", ".js", ".jsx"];
-const LABEL_ZOOM = 0.7; // labels at/above this zoom
+const LABEL_ZOOM = 0.7;
 
 export default function GraphView({
   nodes,
@@ -33,6 +33,7 @@ export default function GraphView({
   edges: Edge[];
   height?: number;
 }) {
+  const { t } = useTranslation();
   const [layoutName, setLayoutName] = useState<(typeof LAYOUTS)[number]["name"]>("fcose");
   const [onlyConnected, setOnlyConnected] = useState(true);
   const [hideAssets, setHideAssets] = useState(true);
@@ -41,7 +42,7 @@ export default function GraphView({
   const cyRef = useRef<cytoscape.Core | null>(null);
   const tippiesRef = useRef<Map<string, TippyInstance>>(new Map());
 
-  // degree → node size
+  // compute degree (used for node size)
   const degree = useMemo(() => {
     const d = new Map<string, number>();
     edges.forEach((e) => {
@@ -51,6 +52,7 @@ export default function GraphView({
     return d;
   }, [edges]);
 
+  // color based on extension
   function colorFor(path: string) {
     if (path.endsWith(".tsx")) return "#57cc99";
     if (path.endsWith(".ts"))  return "#38a3a5";
@@ -64,6 +66,7 @@ export default function GraphView({
 
   const nodeIds = useMemo(() => new Set(nodes.map((n) => n.id)), [nodes]);
 
+  // build Cytoscape elements
   const elements = useMemo(() => {
     const nodeElems = nodes.map((n) => {
       const deg = degree.get(n.id) ?? 0;
@@ -91,14 +94,14 @@ export default function GraphView({
     return [...nodeElems, ...edgeElems];
   }, [nodes, edges, degree, nodeIds]);
 
-  // layout / fit
+  // run layout when nodes/edges change
   useEffect(() => {
     const cy = cyRef.current;
     if (!cy) return;
     runLayout(cy, layoutName);
   }, [elements, layoutName]);
 
-  // zoom-aware labels + neighbor highlight + filters
+  // zoom labels + filtering
   useEffect(() => {
     const cy = cyRef.current;
     if (!cy) return;
@@ -122,7 +125,6 @@ export default function GraphView({
     cy.on("tap", "node", onNodeTap);
     cy.on("tap", onBgTap);
 
-    // mark orphans and apply visibility filters
     const applyFilters = () => {
       cy.nodes().forEach((n) => {
         const deg = n.data("deg") ?? 0;
@@ -143,12 +145,11 @@ export default function GraphView({
     };
   }, [elements, onlyConnected, hideAssets]);
 
-  // tooltips (tippy) for full path + degrees
+  // tooltips
   useEffect(() => {
     const cy = cyRef.current;
     if (!cy) return;
 
-    // cleanup old tippies
     tippiesRef.current.forEach((t) => t.destroy());
     tippiesRef.current.clear();
 
@@ -184,7 +185,7 @@ export default function GraphView({
     };
   }, [elements]);
 
-  // search / focus
+  // search
   const onSearch = () => {
     const cy = cyRef.current; if (!cy) return;
     const q = query.trim().toLowerCase();
@@ -201,51 +202,68 @@ export default function GraphView({
     <div className="graph-card">
       <div className="graph-toolbar">
         <div className="graph-left">
-          <strong>Layout:</strong>
-          <select className="graph-select" value={layoutName} onChange={(e) => setLayoutName(e.target.value as any)}>
-            {LAYOUTS.map((l) => <option key={l.name} value={l.name}>{l.label}</option>)}
+          <strong>{t("graph.layout")}:</strong>
+          <select
+            className="graph-select"
+            value={layoutName}
+            onChange={(e) => setLayoutName(e.target.value as any)}
+          >
+            {LAYOUTS.map((l) => (
+              <option key={l.name} value={l.name}>{l.label}</option>
+            ))}
           </select>
-
           <label className="graph-check">
-            <input type="checkbox" checked={onlyConnected} onChange={(e) => setOnlyConnected(e.target.checked)} />
-            Show only connected
+            <input
+              type="checkbox"
+              checked={onlyConnected}
+              onChange={(e) => setOnlyConnected(e.target.checked)}
+            />
+            {t("graph.showOnlyConnected")}
           </label>
           <label className="graph-check">
-            <input type="checkbox" checked={hideAssets} onChange={(e) => setHideAssets(e.target.checked)} />
-            Hide assets
+            <input
+              type="checkbox"
+              checked={hideAssets}
+              onChange={(e) => setHideAssets(e.target.checked)}
+            />
+            {t("graph.hideAssets")}
           </label>
         </div>
-
         <div className="graph-right">
           <input
             className="graph-search"
-            placeholder="Search file…"
+            placeholder={t("graph.searchPlaceholder")}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && onSearch()}
           />
-          <button className="btn-neo small" onClick={onSearch}>Find</button>
-          <button className="btn-neo small" onClick={() => cyRef.current?.fit(undefined, 30)}>Fit</button>
+          <button className="btn-neo small" onClick={onSearch}>{t("graph.find")}</button>
+          <button className="btn-neo small" onClick={() => cyRef.current?.fit(undefined, 30)}>
+            {t("graph.fit")}
+          </button>
           <button
             className="btn-neo small"
             onClick={() => {
               const cy = cyRef.current; if (!cy) return;
               const url = cy.png({ full: true, scale: 2, bg: "#ffffff" });
-              const a = document.createElement("a"); a.href = url; a.download = "graph.png"; a.click();
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = "graph.png";
+              a.click();
             }}
           >
-            Export PNG
+            {t("graph.exportPng")}
           </button>
         </div>
       </div>
-      <div className="graph-legend">
-        <span><span className="legend-box" style={{ background: "#57cc99" }}></span> .tsx</span>
-        <span><span className="legend-box" style={{ background: "#38a3a5" }}></span> .ts</span>
-        <span><span className="legend-box" style={{ background: "#80ed99" }}></span> .jsx</span>
-        <span><span className="legend-box" style={{ background: "#22577a" }}></span> .js</span>
-        <span><span className="legend-box" style={{ background: "#c7f9cc" }}></span> other</span>
-      </div>
 
+      <div className="graph-legend">
+        <span><span className="legend-box" style={{ background: "#57cc99" }}></span> {t("graph.ext.tsx")}</span>
+        <span><span className="legend-box" style={{ background: "#38a3a5" }}></span> {t("graph.ext.ts")}</span>
+        <span><span className="legend-box" style={{ background: "#80ed99" }}></span> {t("graph.ext.jsx")}</span>
+        <span><span className="legend-box" style={{ background: "#22577a" }}></span> {t("graph.ext.js")}</span>
+        <span><span className="legend-box" style={{ background: "#c7f9cc" }}></span> {t("graph.ext.other")}</span>
+      </div>
 
       <div
         style={{
@@ -266,7 +284,6 @@ export default function GraphView({
           maxZoom={3}
           wheelSensitivity={0.25}
           stylesheet={[
-            // base nodes (no label by default)
             {
               selector: "node",
               style: {
@@ -278,7 +295,6 @@ export default function GraphView({
                 height: "data(size)",
               }
             },
-            // labels only when zoomed (label-on), hovered, or selected
             {
               selector: "node.label-on, node:selected, node:hover, node.matched",
               style: {
@@ -296,7 +312,6 @@ export default function GraphView({
                 "text-background-shape": "roundrectangle",
               }
             },
-            // edges
             {
               selector: "edge",
               style: {
@@ -310,7 +325,6 @@ export default function GraphView({
             },
             { selector: "edge[kind = 'dynamic']", style: { "line-style": "dashed", "line-color": "rgba(255,111,0,0.6)", "target-arrow-color": "rgba(255,111,0,0.6)" } },
             { selector: "edge[kind = 'require']", style: { "line-color": "rgba(34,34,34,0.6)", "target-arrow-color": "rgba(34,34,34,0.6)" } },
-            // interactions
             { selector: ".faded", style: { opacity: 0.15 } },
             { selector: ".matched", style: { "border-width": 5, "border-color": "#ff6f00" } },
             { selector: ".hidden", style: { display: "none" } },

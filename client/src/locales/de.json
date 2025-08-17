@@ -1,0 +1,63 @@
+{
+  "hero": {
+    "title": "Baupläne für\nRepositories",
+    "subtitle1": "Visualisiere jedes GitHub-Repository!",
+    "subtitle2": "Verwandle jedes GitHub-Repository in ein interaktives Diagramm zur Visualisierung.",
+    "placeholder": "https://github.com/benutzer/repo",
+    "inputAria": "GitHub-Repository-URL",
+    "visualize": "Visualisieren",
+    "visualizeTooltip": "Diagramm erstellen",
+    "invalidTooltip": "Gib eine gültige GitHub-Repository-URL ein",
+    "examplesLabel": "Probiere diese Beispiel-Repositories:"
+  },
+  "graphPreview": {
+    "files": "Dateien",
+    "edges": "Kanten",
+    "ariaDiagram": "Diagramm der Graph-Vorschau",
+    "ariaStats": "Graph-Statistiken"
+  },
+  "diagramPage": {
+    "directoryStructure": "Verzeichnisstruktur",
+    "repositoryAnalytics": "Repository-Analyse",
+    "graphVisualization": "Graph-Visualisierung",
+    "editUrl": "Repository-URL bearbeiten"
+  },
+  "errors": {
+    "unknown": "Unbekannter Fehler"
+  },
+  "actions": {
+    "copy": "Kopieren"
+  },
+  "graph": {
+    "layout": "Entwurf",
+    "showOnlyConnected": "Nur verbundene anzeigen",
+    "hideAssets": "Assets ausblenden",
+    "searchPlaceholder": "Datei suchen…",
+    "find": "Finden",
+    "fit": "Anpassen",
+    "exportPng": "Als PNG exportieren",
+    "ext": {
+      "tsx": ".tsx",
+      "ts": ".ts",
+      "jsx": ".jsx",
+      "js": ".js",
+      "other": "andere"
+    }
+  },
+  "tests": "Tests",
+  "file": "Datei",
+  "file_plural": "Dateien",
+  "framework": "Framework",
+  "license": "Lizenz",
+  "dependencies": "Abhängigkeiten",
+  "outdated": "veraltet",
+  "outdatedDeps": "Veraltete Abhängigkeiten",
+  "missing": "Fehlt",
+  "andMore": "…und {{count}} weitere",
+  "apiKey": "API-Schlüssel",
+  "privateRepo": "Privates Repository",
+  "nav": {
+    "imprint": "Impressum",
+    "github": "GitHub"
+  }
+}

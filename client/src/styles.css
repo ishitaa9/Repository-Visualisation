@@ -507,6 +507,7 @@ body{
   font-weight: 700;
   background: #fff;
   box-shadow: 3px 3px 0 0 var(--ink);
+  color: var(--c-1);
 }
 .graph-legend {
   display: flex;
@@ -528,7 +529,35 @@ body{
   vertical-align: middle;
   border-radius: 3px;
 }
+.lang-switcher {
+  display: inline-flex;
+  border: 1px solid var(--c-1);
+  border-radius: 6px;
+  align-items: baseline;
+  overflow: hidden;
+  height: 25px;
+  align-self: center;
+}
 
+.lang-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--c-1);
+  padding: 4px 10px;
+  transition: background 0.2s, color 0.2s;
+  line-height: 25px;
+  padding: 0 10px;
+}
+.lang-btn:not(:last-child) {
+  border-right: 1px solid var(--c-1);
+}
+
+.lang-btn.active {
+  background: var(--c-1);
+  color: #fff;
+}
 
 @media (max-width: 640px){
   .sparkle{

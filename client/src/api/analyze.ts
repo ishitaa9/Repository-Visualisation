@@ -6,9 +6,18 @@ export type OutdatedDep = {
   latest: string;
   isOutdated: boolean;
 };
+export type GraphNode = {
+  id: string;
+  path: string;
+  type: "file" | "dir";
+  lang?: string; // ⬅️ new
+};
 
-export type GraphNode = { id: string; path: string; type: "file" | "dir" };
-export type GraphEdge = { source: string; target: string; kind: "import" | "require" | "dynamic" };
+export type GraphEdge = {
+  source: string;
+  target: string;
+  kind: "import" | "require" | "dynamic"
+};
 
 export type Analysis = {
   repoUrl: string;

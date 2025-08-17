@@ -1,4 +1,5 @@
 import { Beaker, Scale, Package } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 type OutdatedDep = {
   name: string;
@@ -34,6 +35,7 @@ export default function RepoAnalyticsCard({
   testFiles = 0,
   testFrameworks = [],
 }: Props) {
+  const { t } = useTranslation();
   if (loading) return <div className="skeleton-box tall" />;
   if (error) return <div className="error">⚠️ {error}</div>;
 
@@ -46,23 +48,23 @@ export default function RepoAnalyticsCard({
         <ul className="analytics-list">
           <li>
             <Beaker size={14} style={{ marginRight: 4 }} aria-hidden />
-            <strong>Tests:</strong> {testFiles ?? 0} file{(testFiles ?? 0) === 1 ? "" : "s"}
+            <strong>{t("tests")}:</strong> {testFiles ?? 0} file{(testFiles ?? 0) === 1 ? "" : "s"}
             {hasFrameworks && (
               <>
                 {" "}
-                · <strong>Framework:</strong> {testFrameworks.join(", ")}
+                · <strong>{t("framework")}:</strong> {testFrameworks.join(", ")}
               </>
             )}
           </li>
 
           <li>
             <Scale size={14} style={{ marginRight: 4 }} aria-hidden />
-            <strong>License:</strong> {license || "Missing"}
+            <strong>{t("license")}:</strong> {license || "Missing"}
           </li>
 
           <li>
             <Package size={14} style={{ marginRight: 4 }} aria-hidden />
-            <strong>Dependencies:</strong> {depsTotal ?? 0}{" "}
+            <strong>{t("dependencies")}:</strong> {depsTotal ?? 0}{" "}
             {typeof depsOutdated === "number" && (
               <>
                 (
@@ -77,7 +79,7 @@ export default function RepoAnalyticsCard({
 
         {hasOutdated && (
           <details style={{ marginTop: "0.5rem" }}>
-            <summary>Outdated dependencies</summary>
+            <summary>{t("outdatedDeps")}</summary>
             <ul style={{ fontSize: "0.85rem", marginTop: "0.25rem" }}>
               {outdatedList.slice(0, 5).map((dep) => (
                 <li key={dep.name}>

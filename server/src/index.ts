@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import { z } from "zod";
 import { analyzeRepo } from "./analysis/analyze";
+import { detectLanguage } from "./analysis/universalGraph";
 
 const app = express();
 app.use(cors());
@@ -40,13 +41,14 @@ app.post("/api/analyze", async (req, res) => {
       stats: {
         fileCount: result.files.length,
         edgeCount: result.edges.length,
-        durationMs: 0, // optionally measure with performance.now()
+        durationMs: 0,
       },
       graph: {
         nodes: result.files.map((f) => ({
           id: f,
           path: f,
           type: "file" as const,
+          lang: detectLanguage(f),
         })),
         edges: result.edges,
       },

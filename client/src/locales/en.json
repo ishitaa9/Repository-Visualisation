@@ -1,0 +1,63 @@
+{
+  "hero": {
+    "title": "Blueprints for\nRepositories",
+    "subtitle1": "Visualize any GitHub repository!",
+    "subtitle2": "Turn any GitHub repository into an interactive diagram for visualization.",
+    "placeholder": "https://github.com/owner/repo",
+    "inputAria": "GitHub repository URL",
+    "visualize": "Visualize",
+    "visualizeTooltip": "Generate diagram",
+    "invalidTooltip": "Enter a valid GitHub repo URL",
+    "examplesLabel": "Try these example repositories:"
+  },
+  "graphPreview": {
+    "files": "Files",
+    "edges": "Edges",
+    "ariaDiagram": "Graph preview diagram",
+    "ariaStats": "Graph statistics"
+  },
+  "diagramPage": {
+    "directoryStructure": "Directory Structure",
+    "repositoryAnalytics": "Repository Analytics",
+    "graphVisualization": "Graph Visualization",
+    "editUrl": "Edit repository URL"
+  },
+  "errors": {
+    "unknown": "Unknown error"
+  },
+  "actions": {
+    "copy": "Copy"
+  },
+  "graph": {
+    "layout": "Layout",
+    "showOnlyConnected": "Show only connected",
+    "hideAssets": "Hide assets",
+    "searchPlaceholder": "Search file…",
+    "find": "Find",
+    "fit": "Fit",
+    "exportPng": "Export PNG",
+    "ext": {
+      "tsx": ".tsx",
+      "ts": ".ts",
+      "jsx": ".jsx",
+      "js": ".js",
+      "other": "other"
+    }
+  },
+  "tests": "Tests",
+  "file": "file",
+  "file_plural": "files",
+  "framework": "Framework",
+  "license": "License",
+  "dependencies": "Dependencies",
+  "outdated": "outdated",
+  "outdatedDeps": "Outdated dependencies",
+  "missing": "Missing",
+  "andMore": "…and {{count}} more",
+  "apiKey": "API Key",
+  "privateRepo": "Private Repository",
+  "nav": {
+    "imprint": "Imprint",
+    "github": "GitHub"
+  }
+}

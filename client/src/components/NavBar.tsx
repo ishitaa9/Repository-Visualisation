@@ -1,8 +1,11 @@
-import github from '../assets/github.png'
-import laptop from '../assets/laptop.svg'
-import { Link } from 'react-router-dom'
+import github from '../assets/github.png';
+import laptop from '../assets/laptop.svg';
+import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from './LanguageSwitcher';
 
 export default function NavBar() {
+  const { t } = useTranslation();
 
   return (
     <header className="navbar">
@@ -13,18 +16,16 @@ export default function NavBar() {
         </div>
 
         <nav className="nav-links">
-          <a href="#">API Key</a>
-          <a href="#">Private Repository</a>
+          <a href="#">{t("nav.imprint")}</a>
           <div className='nav-link-container'>
-          <img src={github} alt='GitHub logo' className='github-logo'/>
-          <a href="https://github.com/ishitaa9/Repository-Visualisation" rel="noopener noreferrer" target='_blank'>GitHub</a>
+            <img src={github} alt='GitHub logo' className='github-logo'/>
+            <a href="https://github.com/ishitaa9/Repository-Visualisation" rel="noopener noreferrer" target='_blank'>
+              {t("nav.github")}
+            </a>
           </div>
+          <LanguageSwitcher />
         </nav>
       </div>
     </header>
   );
 }
-
-// <button type="button" className="linklike" aria-haspopup="dialog">API Key</button>
-// <button type="button" className="linklike">Private Repository</button>
-// <a href="https://github.com/ishitaa9/Repository-Visualisation" target="_blank" rel="noopener noreferrer">GitHub</a>

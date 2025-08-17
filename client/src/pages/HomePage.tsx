@@ -7,11 +7,11 @@ export default function HomePage() {
   const [params, setParams] = useSearchParams();
   const navigate = useNavigate();
 
-  // Read initial value from URL (?repo=)
+  // Read initial value from URL
   const initial = params.get("repo") ?? "";
   const [repoUrl, setRepoUrl] = useState(initial);
 
-  // Keep URL in sync as the user types (no nav yet)
+  // Keep URL in sync as the user types
   useEffect(() => {
     const current = params.get("repo") ?? "";
     if (repoUrl !== current) {
@@ -21,7 +21,6 @@ export default function HomePage() {
       window.history.replaceState(null, "", `/?${next.toString()}`);
       setParams(next, { replace: true });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [repoUrl]);
 
   const isValid = useMemo(() => !!parseGithubUrl(repoUrl), [repoUrl]);

@@ -3,6 +3,7 @@ import fs from "node:fs/promises";
 import { downloadAndExtractRepo, type RepoRef } from "./github";
 import { listAllFiles } from "./listFiles";
 import { buildJsTsEdges } from "./jsGraph";
+import { buildUniversalGraph } from "./universalGraph";
 import { collectAllDependencies, checkOutdatedDependencies } from "./dependencyUtils";
 import { computeTestAnalytics } from "./tests";
 
@@ -26,7 +27,8 @@ export async function analyzeRepo(ref: RepoRef): Promise<AnalysisResult> {
 
   try {
     const files = await listAllFiles(rootAbs, { maxFiles: 8000 });
-    const edges = await buildJsTsEdges(rootAbs, files);
+    // const edges = await buildJsTsEdges(rootAbs, files);
+    const { nodes, edges } = await buildUniversalGraph(rootAbs, files);
 
     // deps + vulnerabilities
     const deps = await collectAllDependencies(rootAbs, files);
@@ -40,7 +42,7 @@ export async function analyzeRepo(ref: RepoRef): Promise<AnalysisResult> {
     return {
       repoUrl: `https://github.com/${ref.owner}/${ref.name}`,
       commitSha,
-      files,
+      files: nodes.map(n => n.path),
       edges,
       depsTotal: Object.keys(deps).length,
       depsOutdated: outdated.filter((d) => d.isOutdated).length,

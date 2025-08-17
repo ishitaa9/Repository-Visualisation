@@ -5,6 +5,7 @@ import RootLayout from "./layouts/RootLayout";
 import HomePage from "./pages/HomePage";
 import DiagramPage from "./pages/DiagramPage";
 import "./styles.css";
+import "./i18n";
 
 const router = createBrowserRouter([
   {
