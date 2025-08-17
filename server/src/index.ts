@@ -1,4 +1,3 @@
-// backend/src/index.ts
 import express from "express";
 import cors from "cors";
 import { z } from "zod";
@@ -68,5 +67,5 @@ app.post("/api/analyze", async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT ?? 4000;
+const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => console.log(`API on http://localhost:${PORT}`));

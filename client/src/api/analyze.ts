@@ -6,17 +6,18 @@ export type OutdatedDep = {
   latest: string;
   isOutdated: boolean;
 };
+
 export type GraphNode = {
   id: string;
   path: string;
   type: "file" | "dir";
-  lang?: string; // ⬅️ new
+  lang?: string;
 };
 
 export type GraphEdge = {
   source: string;
   target: string;
-  kind: "import" | "require" | "dynamic"
+  kind: "import" | "require" | "dynamic";
 };
 
 export type Analysis = {
@@ -35,13 +36,17 @@ export type Analysis = {
   };
 };
 
+// Use this to point to your backend in prod (e.g. Vercel/Render).
+// In dev, leave VITE_API_BASE empty to hit the local proxy/same-origin.
+const API_BASE = import.meta.env.VITE_API_BASE || "";
+const BASE = API_BASE; // when "", fetch will use relative "/api/*"
+
 export async function analyzeRepoMock(repoUrl: string, signal?: AbortSignal): Promise<Analysis> {
   const parsed = parseGithubUrl(repoUrl);
   if (!parsed) throw new Error("Invalid GitHub URL");
 
-  // Simulate latency (800–1400ms)
   const delay = 800 + Math.floor(Math.random() * 600);
-  await new Promise((res, rej) => {
+  await new Promise<void>((res, rej) => {
     const t = setTimeout(res, delay);
     signal?.addEventListener("abort", () => {
       clearTimeout(t);
@@ -49,7 +54,6 @@ export async function analyzeRepoMock(repoUrl: string, signal?: AbortSignal): Pr
     });
   });
 
-  // Make a small deterministic-ish mock graph
   const seed = (parsed.owner.length + parsed.name.length) % 5;
   const files = [
     "src/index.tsx",
@@ -89,7 +93,7 @@ export async function analyzeRepoMock(repoUrl: string, signal?: AbortSignal): Pr
 
 /** Real backend call */
 export async function analyzeRepoServer(repoUrl: string, signal?: AbortSignal): Promise<Analysis> {
-  const res = await fetch("/api/analyze", {
+  const res = await fetch(`${BASE}/api/analyze`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ repoUrl }),
