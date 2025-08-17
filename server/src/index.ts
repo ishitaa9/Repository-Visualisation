@@ -33,7 +33,6 @@ app.post("/api/analyze", async (req, res) => {
     const { owner, name, ref } = parseGithubUrl(parsed.data.repoUrl);
     const result = await analyzeRepo({ owner, name, ref });
 
-    // Shape the response to match frontend src/api/analyze.ts `Analysis`
     res.json({
       repoUrl: result.repoUrl,
       commit: result.commitSha,
