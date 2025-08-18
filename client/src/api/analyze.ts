@@ -36,10 +36,8 @@ export type Analysis = {
   };
 };
 
-// Use this to point to your backend in prod (e.g. Vercel/Render).
-// In dev, leave VITE_API_BASE empty to hit the local proxy/same-origin.
 const API_BASE = import.meta.env.VITE_API_BASE || "";
-const BASE = API_BASE; // when "", fetch will use relative "/api/*"
+const BASE = API_BASE;
 
 export async function analyzeRepoMock(repoUrl: string, signal?: AbortSignal): Promise<Analysis> {
   const parsed = parseGithubUrl(repoUrl);
