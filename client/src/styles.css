@@ -39,7 +39,6 @@ body{
   position: sticky; top:0; z-index:10;
   background: var(--bg);
   backdrop-filter: saturate(120%) blur(6px);
-  border-bottom: 4px solid var(--ink);
 }
 .nav-inner{
   display:flex;
@@ -296,7 +295,6 @@ body{
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  border-top: 4px solid var(--ink);
   padding: 14px 0;
   text-align:center;
 }
@@ -529,6 +527,7 @@ body{
   vertical-align: middle;
   border-radius: 3px;
 }
+/* language toggle */
 .lang-switcher {
   display: inline-flex;
   border: 1px solid var(--c-1);
@@ -555,7 +554,7 @@ body{
 }
 
 .lang-btn.active {
-  background: var(--c-1);
+  background: var(--c-2);
   color: #fff;
 }
 

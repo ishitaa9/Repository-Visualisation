@@ -6,9 +6,6 @@ export type RepoAnalytics = {
   depsTotal: number;
   depsOutdated: number | null;
   testFiles: number;
-  // placeholders for later expansions
-  contributors: number | null;
-  busFactor: number | null;
 };
 
 export async function computeRepoAnalytics(
@@ -53,9 +50,8 @@ export async function computeRepoAnalytics(
   return {
     license,
     depsTotal,
-    depsOutdated: null, // optional: fill later with outdated check
+    depsOutdated: null,
     testFiles,
-    contributors: null, // future: GitHub API
-    busFactor: null,    // future metric
+
   };
 }
