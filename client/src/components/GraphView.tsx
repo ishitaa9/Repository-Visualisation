@@ -14,6 +14,17 @@ cytoscape.use(popper(createPopper));
 type Node = { id: string; path: string; type: string };
 type Edge = { source: string; target: string; kind: "import" | "require" | "dynamic" };
 
+type ExtendedLayoutOptions = cytoscape.LayoutOptions & {
+  animate?: boolean;
+  padding?: number;
+  nodeRepulsion?: number;
+  idealEdgeLength?: number;
+  edgeElasticity?: number;
+  startAngle?: number;
+  directed?: boolean;
+  spacingFactor?: number;
+};
+
 const LAYOUTS = [
   { name: "fcose", label: "fCoSE" },
   { name: "cose", label: "COSE (force)" },
@@ -341,7 +352,7 @@ function basename(p: string) {
 }
 
 function runLayout(cy: cytoscape.Core, name: string) {
-  const opts: cytoscape.LayoutOptions =
+  const opts: ExtendedLayoutOptions =
     name === "fcose"
       ? { name: "fcose", animate: false, padding: 30, nodeRepulsion: 6500, idealEdgeLength: 110, edgeElasticity: 0.2 }
       : name === "concentric"
