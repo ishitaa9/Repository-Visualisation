@@ -7,9 +7,7 @@ Built with React, TypeScript, Cytoscape.js, Express, and Vite
 
 
 ## 🔗 Live Demo
-👉 [Try it here](https://repository-visualisation.vercel.app)  
-
-![demo gif](docs/demo.gif)  
+👉 [Try it here](https://repository-visualisation.vercel.app)   
 
 
 ## ✨ Features
